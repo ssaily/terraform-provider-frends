@@ -40,7 +40,7 @@ export FRENDS_TOKEN="your-bearer-token"
 
 | Resource | Description |
 |---|---|
-| `frends_process` | Import a `.frends` package and manage a process |
+| `frends_process` | Import a Frends Process JSON package and manage a process |
 | `frends_process_deployment` | Deploy a process version to an agent group |
 | `frends_environment_variable` | Manage an environment variable schema and its per-environment values |
 | `frends_api_key` | Manage an API access key for an environment |
