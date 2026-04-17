@@ -24,7 +24,7 @@ terraform {
 }
 
 provider "frends" {
-  host_url = "https://my-company.frends.com"
+  host_url = "https://my-company.frendsapp.com"
   token    = var.frends_token
 }
 ```
@@ -32,7 +32,7 @@ provider "frends" {
 Credentials can also be supplied via environment variables to avoid hardcoding them:
 
 ```bash
-export FRENDS_HOST_URL="https://my-company.frends.com"
+export FRENDS_HOST_URL="https://my-company.frendsapp.com"
 export FRENDS_TOKEN="your-bearer-token"
 ```
 
@@ -64,8 +64,8 @@ See [`docs/index.md`](docs/index.md) for full attribute reference and operation 
 ```hcl
 # Import a process package and deploy it to production.
 resource "frends_process" "order_processor" {
-  package_path = "${path.module}/packages/OrderProcessor.frends"
-  package_hash = filesha256("${path.module}/packages/OrderProcessor.frends")
+  package_path = "${path.module}/packages/OrderProcessor.json"
+  package_hash = filesha256("${path.module}/packages/OrderProcessor.json")
 }
 
 data "frends_environment" "production" {
@@ -119,7 +119,7 @@ make test
 **Acceptance tests** (require a live Frends instance):
 
 ```bash
-export FRENDS_HOST_URL="https://my-company.frends.com"
+export FRENDS_HOST_URL="https://my-company.frendsapp.com"
 export FRENDS_TOKEN="your-bearer-token"
 make testacc
 ```
@@ -163,4 +163,4 @@ make fmt
 
 ## License
 
-[Mozilla Public License 2.0](LICENSE)
+Apache2.0 license
