@@ -230,6 +230,44 @@ func TestGetPrivateApplication_found(t *testing.T) {
 	}
 }
 
+// --- ExportProcess ---
+
+func TestExportProcess_returnsBytes(t *testing.T) {
+	t.Parallel()
+	wantBody := []byte(`{"name":"OrderProcessor","version":3}`)
+	_, c := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/processes/10/export" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(wantBody)
+	})
+
+	got, err := c.ExportProcess(context.Background(), 10)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if string(got) != string(wantBody) {
+		t.Fatalf("expected body %q, got %q", wantBody, got)
+	}
+}
+
+func TestExportProcess_notFound(t *testing.T) {
+	t.Parallel()
+	_, c := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	})
+
+	got, err := c.ExportProcess(context.Background(), 999)
+	if err != nil {
+		t.Fatalf("expected nil error on 404, got: %v", err)
+	}
+	if got != nil {
+		t.Fatalf("expected nil bytes on 404, got %q", got)
+	}
+}
+
 // --- API Policies ---
 
 func TestCreateApiPolicy_sendsCorrectBody(t *testing.T) {

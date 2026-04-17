@@ -156,6 +156,28 @@ func (r *ProcessResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.GUID = types.StringValue(process.UniqueIdentifier)
 	state.Version = types.Int64Value(int64(process.Version))
 
+	// Drift detection: re-export the deployed package and hash it. If the hash
+	// differs from what is stored in state, someone modified the process outside
+	// of Terraform (e.g. via Frends Control Panel). Updating PackageHash here
+	// causes the next `terraform plan` to show a diff against the config's
+	// filesha256() value, prompting a re-import to restore the intended state.
+	// Skip when PackageHash is empty (e.g. right after terraform import).
+	if state.PackageHash.ValueString() != "" {
+		exported, err := r.client.ExportProcess(ctx, state.ID.ValueInt64())
+		if err != nil {
+			resp.Diagnostics.AddError("Exporting Process for Drift Detection", err.Error())
+			return
+		}
+		if exported != nil {
+			h := sha256.New()
+			h.Write(exported)
+			remoteHash := hex.EncodeToString(h.Sum(nil))
+			if remoteHash != state.PackageHash.ValueString() {
+				state.PackageHash = types.StringValue(remoteHash)
+			}
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
