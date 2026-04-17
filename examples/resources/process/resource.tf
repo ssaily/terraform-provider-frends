@@ -1,5 +1,5 @@
 # Import a process package and deploy it to production.
-# The filesha256() call ensures Terraform detects when the .frends file changes
+# The filesha256() call ensures Terraform detects when the JSON file changes
 # and automatically re-imports it as a new version on the next apply.
 
 resource "frends_process" "order_processor" {
